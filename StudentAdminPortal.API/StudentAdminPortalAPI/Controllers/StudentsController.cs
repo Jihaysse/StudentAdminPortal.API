@@ -30,7 +30,7 @@ namespace StudentAdminPortalAPI.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/{studentId:guid}")]
+        [Route("[controller]/{studentId:guid}"), ActionName("GetStudentAsync")]
         public async Task<IActionResult> GetStudentAsync([FromRoute] Guid studentId)
         {
             // Fetch student details
@@ -42,6 +42,17 @@ namespace StudentAdminPortalAPI.Controllers
             // Convert data model to domain model
             Student domainModelStudent = mapper.Map<Student>(student);
             return Ok(domainModelStudent);
+        }
+
+        [HttpPost]
+        [Route("[controller]/Add")]
+        public async Task<IActionResult> AddStudentAsync([FromBody] AddStudentRequest request)
+        {
+            var studentDataModel = mapper.Map<DataModels.Student>(request);
+            await studentRepository.AddStudent(studentDataModel);
+
+            var studentDomainModel = mapper.Map<Student>(studentDataModel);
+            return CreatedAtAction(nameof(GetStudentAsync), new { studentId = studentDataModel.Id }, studentDomainModel);
         }
 
         [HttpPut]
