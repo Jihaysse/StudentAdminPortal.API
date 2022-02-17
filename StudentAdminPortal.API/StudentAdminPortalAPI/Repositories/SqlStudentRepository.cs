@@ -74,5 +74,18 @@ namespace StudentAdminPortalAPI.Repositories
             await context.SaveChangesAsync();
             return newStudent.Entity;
         }
+
+        public async Task<bool> UpdateProfileImage(Guid studentId, string profileImageURL)
+        {
+            var student = await GetStudentAsync(studentId);
+
+            if (student != null)
+            {
+                student.ProfileImageURL = profileImageURL;
+                await context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
     }
 }
