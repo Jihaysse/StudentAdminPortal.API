@@ -96,6 +96,20 @@ namespace StudentAdminPortalAPI.Controllers
         [Route("[controller]/{studentId:guid}/upload-image")]
         public async Task<IActionResult> UploadImage([FromRoute] Guid studentId, IFormFile profileImage)
         {
+            if (profileImage == null || profileImage.Length <= 0) return NotFound();
+
+            List<string> validExtensions = new List<string>
+            {
+                ".jpeg",
+                ".png",
+                ".gif",
+                ".jpg"
+            };
+
+            // Check if image file has a valid extension
+            string extension = Path.GetExtension(profileImage.FileName);
+            if (!validExtensions.Contains(extension)) return BadRequest("This is not a valid image file");
+
             // Check if student exists
             if (await studentRepository.Exists(studentId))
             {
